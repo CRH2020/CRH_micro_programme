@@ -1,0 +1,11 @@
+features/cellular
+features/cryptocell
+features/nanostack
+features/netsocket
+features/mbedtls
+features/lwipstack
+features/lorawan
+features/nfc
+features/storage/kvstore
+components/wifi
+drivers/source/usb

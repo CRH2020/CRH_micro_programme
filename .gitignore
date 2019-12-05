@@ -1,0 +1,6 @@
+.pio
+BuildCache
+.vscode
+test
+__pycache__
+

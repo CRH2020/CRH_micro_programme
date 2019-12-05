@@ -7,14 +7,10 @@
 #include <mbed.h>
 #include <ros.h>
 #include <std_msgs/StringLib.h>
+#include "ROSManager.h"
+#include "SequanceManager.h"
+#include "StepperMotor.h"
 
-
-
-ros::NodeHandle  nh;
-std_msgs::String str_msg;
-ros::Publisher chatter("chatter", &str_msg);
-
-char hello[13] = "hello world!";
 /*!
  * \fn int main (void)
  * 
@@ -24,23 +20,15 @@ char hello[13] = "hello world!";
  * 
  */
 int main() {
-  printf("Start: Salut");
+  printf("Start: Hello");
   DigitalOut myled(LED1);
-  int i = 0;
-
-  nh.initNode();
-  nh.advertise(chatter);
+  SequanceManager sequanceur;
+  StepperMotor mL,mR;
+  ROSManager rosmanger(mL,mR,sequanceur);
   
 
   while(1) {
-        myled.write(1);        // set LED1 pin to high
+        myled=!myled;        // set LED1 pin to high
         ThisThread::sleep_for(500);
-        myled.write(0);     // set LED1 pin to low
-        ThisThread::sleep_for(500);
-        sprintf(hello,"%d",i);
-        str_msg.data = hello;
-        chatter.publish( &str_msg );
-        nh.spinOnce();
-        i++;
   }
 }

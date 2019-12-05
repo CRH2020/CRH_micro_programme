@@ -30,7 +30,7 @@
 #if (MBED_MAJOR_VERSION == 5) && (MBED_MINOR_VERSION >= 2)
 #elif (MBED_MAJOR_VERSION == 2) && (MBED_PATCH_VERSION > 130)
 #else
-#error "BufferedSerial version 13 and newer requires use of Mbed OS 5.2.0 and newer or Mbed 2 version 130 and newer. Use BufferedSerial version 12 and older or upgrade the Mbed version.
+#error "BufferedSerial version 13 and newer requires use of Mbed OS 5.2.0 and newer or Mbed 2 version 130 and newer. Use BufferedSerial version 12 and older or upgrade the Mbed version."
 #endif
 
 /** A serial port (UART) for communication with other serial devices
