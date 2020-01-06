@@ -5,6 +5,13 @@
  * 
  * \details Définition de toute les configurations pour le robot
  */
+//PIN DEFINITION
+#define PIN_MOTOR_CAN_RD PD_0
+#define PIN_MOTOR_CAN_TD PD_1
+
+//Stepper
+#define STEPPER_BAUDRATE 9600
+
 //Mécanique
 #define ENTRAX_ROUES 400
 #define ENTRAX_ROUE_CENTRE 200

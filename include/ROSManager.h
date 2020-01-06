@@ -26,6 +26,7 @@ class ROSManager {
     public:
         ROSManager(StepperMotor& motorLeft,StepperMotor& motorRight,SequanceManager& sequancer);/*!< constructeur de ROSManager */
         ~ROSManager();/*!< destructeur de ROSManager */
+        void rosDebug(const char * fmt);
     private:
         void startThread(void);
         void messageVelocity(const geometry_msgs::Quaternion& msg);

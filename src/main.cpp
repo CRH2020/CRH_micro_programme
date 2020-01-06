@@ -20,11 +20,13 @@
  * 
  */
 int main() {
-  printf("Start: Hello");
   DigitalOut myled(LED1);
   SequanceManager sequanceur;
-  StepperMotor mL,mR;
+  CAN can(PIN_MOTOR_CAN_RD,PIN_MOTOR_CAN_TD);
+  StepperMotor mL(can,200,false);
+  StepperMotor mR(can,200,false);
   ROSManager rosmanger(mL,mR,sequanceur);
+  rosmanger.rosDebug("Salut");
   
 
   while(1) {

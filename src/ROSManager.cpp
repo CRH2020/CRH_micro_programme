@@ -29,13 +29,22 @@ void ROSManager::startThread(void){
 
 void ROSManager::messageVelocity(const geometry_msgs::Quaternion& msg){
     double vdif,vL,vR;
+    char textBuff[50];
 
     vdif = msg.w*ENTRAX_ROUE_CENTRE;
     vL = msg.x - vdif;
     vR = msg.x + vdif;
 
-    printf("Motor Gauche v=%lf",vL);
-    printf("Motor Droit v=%lf",vR);
+    sprintf(textBuff,"Motor Gauche v=%lf",vL);
+    rosDebug(textBuff);
+    _motorLeft.move(vL);
+    sprintf(textBuff,"Motor Droit v=%lf",vR);
+    rosDebug(textBuff);
+    _motorRight.move(vR);
+}
+
+void ROSManager::rosDebug(const char * fmt){
+    node.loginfo(fmt);
 }
 
 /*!
