@@ -21,7 +21,7 @@
 */
 class StepperMotor {
     public:
-        StepperMotor(CAN& can, double pasParUnite, bool inverse);/*!< constructeur de StepperMotor */
+        StepperMotor(CAN& can, double pasParUnite, bool inverse,uint8_t motorNum);/*!< constructeur de StepperMotor */
         ~StepperMotor();/*!< destructeur de StepperMotor */
 
         void move(double vitesse);
@@ -36,6 +36,7 @@ class StepperMotor {
         double _pasParUnite;
         CAN& _can;
         bool _inverse;
+        uint8_t _motorNum;
 
         void sendTMCL(uint8_t target,eTMCLInstruction instruction,uint8_t type,uint8_t motor,uint32_t value);
         uint8_t cheksumCalulation(uint8_t* data,uint8_t N);

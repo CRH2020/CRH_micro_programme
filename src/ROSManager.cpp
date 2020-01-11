@@ -40,6 +40,7 @@ void ROSManager::messageVelocity(const geometry_msgs::Quaternion& msg){
     _motorLeft.move(vL);
     sprintf(textBuff,"Motor Droit v=%lf",vR);
     rosDebug(textBuff);
+    ThisThread::sleep_for(1);
     _motorRight.move(vR);
 }
 

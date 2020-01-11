@@ -20,17 +20,25 @@
  * 
  */
 int main() {
+  char textBuff[50];
   DigitalOut myled(LED1);
+  CANMessage msg;
   SequanceManager sequanceur;
   CAN can(PIN_MOTOR_CAN_RD,PIN_MOTOR_CAN_TD);
-  StepperMotor mL(can,200,false);
-  StepperMotor mR(can,200,false);
+  can.monitor(false);
+  //can.mode(CAN::GlobalTest);
+  StepperMotor mL(can,200,false,0);
+  StepperMotor mR(can,200,true,1);
   ROSManager rosmanger(mL,mR,sequanceur);
   rosmanger.rosDebug("Salut");
-  
 
   while(1) {
         myled=!myled;        // set LED1 pin to high
+        if(can.read(msg)) {
+            sprintf(textBuff,"Message received: %d %d %d\n\n", msg.data[0],msg.data[1],msg.data[2]);
+            rosmanger.rosDebug(textBuff);
+        }
         ThisThread::sleep_for(500);
+
   }
 }
