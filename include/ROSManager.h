@@ -7,12 +7,15 @@
 #define DEF_ROSMANAGER
 
 #include "mbed.h"
+#include "Motor.h"
 #include "StepperMotor.h"
 #include "SequanceManager.h"
 #include "ros.h"
 #include <std_msgs/StringLib.h>
 #include "RobotConfig.h"
 #include "geometry_msgs/Quaternion.h"
+#include "geometry_msgs/Twist.h"
+#include "geometry_msgs/Pose2D.h"
 
 /*!
  * \class ROSManager
@@ -24,17 +27,17 @@
 */
 class ROSManager {
     public:
-        ROSManager(StepperMotor& motorLeft,StepperMotor& motorRight,SequanceManager& sequancer);/*!< constructeur de ROSManager */
+        ROSManager(Motor& motors,SequanceManager& sequancer);/*!< constructeur de ROSManager */
         ~ROSManager();/*!< destructeur de ROSManager */
         void rosDebug(const char * fmt);
     private:
         void startThread(void);
-        void messageVelocity(const geometry_msgs::Quaternion& msg);
+        void messageVelocity(const geometry_msgs::Twist& msg);
 
-        StepperMotor& _motorLeft,_motorRight;
+        Motor& _motors;
         SequanceManager& _sequancer;
         ros::NodeHandle  node;
-        ros::Subscriber<geometry_msgs::Quaternion, ROSManager> velocity;
+        ros::Subscriber<geometry_msgs::Twist, ROSManager> velocity;
         Thread thread;
 };
 

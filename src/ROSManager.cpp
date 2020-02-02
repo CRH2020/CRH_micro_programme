@@ -12,7 +12,7 @@
  * 
  * 
  */
-ROSManager::ROSManager(StepperMotor& motorLeft,StepperMotor& motorRight,SequanceManager& sequancer): _motorLeft(motorLeft),_motorRight(motorRight),_sequancer(sequancer),velocity(TOPIC_NAME_VELOCITY,&ROSManager::messageVelocity,this){
+ROSManager::ROSManager(Motor& motors,SequanceManager& sequancer): _motors(motors),_sequancer(sequancer),velocity(TOPIC_NAME_VELOCITY,&ROSManager::messageVelocity,this){
     node.initNode();
     node.subscribe(velocity);
     thread.start(callback(this,&ROSManager::startThread));
@@ -27,21 +27,21 @@ void ROSManager::startThread(void){
 
 }
 
-void ROSManager::messageVelocity(const geometry_msgs::Quaternion& msg){
+void ROSManager::messageVelocity(const geometry_msgs::Twist& msg){
     double vdif,vL,vR;
     char textBuff[50];
 
-    vdif = msg.w*ENTRAX_ROUE_CENTRE;
-    vL = msg.x - vdif;
-    vR = msg.x + vdif;
+    vdif = msg.angular.z*ENTRAX_ROUE_CENTRE;
+    vL = msg.linear.x - vdif;
+    vR = msg.linear.x + vdif;
 
     sprintf(textBuff,"Motor Gauche v=%lf",vL);
     rosDebug(textBuff);
-    _motorLeft.move(vL);
+    _motors.getStepper(MOTOR_LEFT).move(vL);
     sprintf(textBuff,"Motor Droit v=%lf",vR);
     rosDebug(textBuff);
     ThisThread::sleep_for(1);
-    _motorRight.move(vR);
+    _motors.getStepper(MOTOR_RIGHT).move(vR);
 }
 
 void ROSManager::rosDebug(const char * fmt){
