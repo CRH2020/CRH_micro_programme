@@ -7,8 +7,7 @@
 #define DEF_SERVOMOTOR
 
 #include "mbed.h"
-#include "ros.h"
-#include <std_msgs/StringLib.h>
+#include "PrintDebug.h"
 
 /*!
  * \class ServoMotor

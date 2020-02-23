@@ -12,7 +12,7 @@
  * 
  * 
  */
-Motor::Motor():can(PIN_MOTOR_CAN_RD,PIN_MOTOR_CAN_TD),mL(can,200,false,0),mR(can,200,true,1){
+Motor::Motor():can(PIN_MOTOR_CAN_RD,PIN_MOTOR_CAN_TD),mL(can,200,false,0),mR(can,200,true,1),mTest(PIN_TESTSERVO,60){
   can.monitor(false);
 }
 
@@ -22,6 +22,13 @@ StepperMotor& Motor::getStepper(StepperId stepperId){
             return mL;
         case MOTOR_RIGHT:
             return mR;
+    }
+}
+
+ServoMotor& Motor::getServo(ServoId ServoId){
+    switch(ServoId){
+        case TEST:
+            return mTest;
     }
 }
 

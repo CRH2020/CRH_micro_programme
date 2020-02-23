@@ -9,11 +9,10 @@
 #include "mbed.h"
 #include "Sensor.h"
 #include "Motor.h"
-#include "ros.h"
-#include <std_msgs/StringLib.h>
+#include "PrintDebug.h"
 
 typedef enum{
-    MOVETO=0,SEQ_END
+    MOVETO=0,TESTSERVO,SEQ_END
 } SequanceId;
 
 /*!
@@ -27,13 +26,19 @@ typedef enum{
 class SequanceManager {
     public:
         SequanceManager(Motor& motors,Sensor& sensors);/*!< constructeur de SequanceManager */
-        void runSequance(SequanceId id,uint8_t nbArg,double* valArg );
+        int runSequance(SequanceId id,uint8_t nbArg,double* valArg );
         ~SequanceManager();/*!< destructeur de SequanceManager */
     private:
         void moveTo();
+        void testServo();
+        void sequanceThread();
         Motor& _motors;
         Sensor& _sensors;
-        Thread threads[SEQ_END];
-        double moveToX,moveToY,moveToAlpha;
+        Thread thread;
+        EventFlags runingFlag;
+        SequanceId runingId;
+        double* valeurArg;
+        uint8_t nombreArg;
 };
+
 #endif

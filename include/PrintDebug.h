@@ -1,0 +1,1 @@
+extern mbed::Callback<int (const char * fmt)> PRINTDEBUG;

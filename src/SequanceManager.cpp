@@ -12,38 +12,62 @@
  * 
  * 
  */
-SequanceManager::SequanceManager(Motor& motors,Sensor& sensors):_motors(motors),_sensors(sensors){
-
+SequanceManager::SequanceManager(Motor& motors,Sensor& sensors):_motors(motors),_sensors(sensors),runingId(SEQ_END){
+    thread.start(callback(this,&SequanceManager::sequanceThread));
 }
 
-void SequanceManager::runSequance(SequanceId id,uint8_t nbArg,double* valArg ){
-    mbed::Callback<void()> task;
+int SequanceManager::runSequance(SequanceId id,uint8_t nbArg,double* valArg ){
 
-    if(id >= SEQ_END)
-        return;
-    if(threads[id].get_state() != Thread::Inactive)
-        return;
-
-
-    switch(id){
-        case MOVETO:
-            if(nbArg<3)
-                return;
-            task = callback(this,&SequanceManager::moveTo);
-            moveToX = valArg[0];
-            moveToY = valArg[1];
-            moveToAlpha =valArg[2];
-            break;
-        default:
-            return;
-
+    if(id >= SEQ_END){
+        PRINTDEBUG("Sequance id faux");
+        return 1;
     }
 
-    threads[id].start(task);
+    if(runingId != SEQ_END){
+        PRINTDEBUG("Sequance deja en cour");
+        return 1;
+    }
+
+    runingId = id;
+
+    if(nbArg>0){
+        valeurArg = new double[nbArg];
+        for(uint8_t i=0;i<nbArg;i++){
+            valeurArg[i] = valArg[i];
+        }
+        nombreArg = nbArg;
+    }
+    runingFlag.set(1);
+    return 0;
+}
+
+void SequanceManager::sequanceThread(){
+
+    while(1){
+        runingFlag.wait_any(1);
+
+        switch(runingId){
+            case TESTSERVO:
+                testServo();
+                break;
+            default:
+                PRINTDEBUG("INVALID ID");
+        }
+
+        runingId = SEQ_END;
+        if(nombreArg > 0)
+            delete valeurArg;
+    }
 }
 
 void SequanceManager::moveTo(){
 
+}
+
+void SequanceManager::testServo(){
+    if(nombreArg == 0)
+        return;
+    _motors.getServo(TEST).setAngle(valeurArg[0]);
 }
 
 /*!

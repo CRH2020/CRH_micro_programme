@@ -3,13 +3,12 @@
  * 
  * \brief fichier header de StepperMotor
  */
-#ifndef DEF_SERVOMOTOR
-#define DEF_SERVOMOTOR
+#ifndef DEF_STEPPERMOTOR
+#define DEF_STEPPERMOTOR
 
 #include "mbed.h"
-#include "ros.h"
-#include <std_msgs/StringLib.h>
 #include "RobotConfig.h"
+#include "PrintDebug.h"
 
 /*!
  * \class StepperMotor
@@ -30,7 +29,8 @@ class StepperMotor {
             ROR = 1,
             ROL = 2,
             MST = 3,
-            MVP = 4 
+            MVP = 4,
+            SAP = 5
         };
         
         double _pasParUnite;

@@ -8,11 +8,17 @@
 
 #include "mbed.h"
 #include "StepperMotor.h"
-#include <std_msgs/StringLib.h>
+#include "ServoMotor.h"
+#include "RobotConfig.h"
+#include "PrintDebug.h"
 
 typedef enum{
     MOTOR_LEFT,MOTOR_RIGHT
 } StepperId;
+
+typedef enum{
+    TEST
+} ServoId;
 
 /*!
  * \class Motor
@@ -26,9 +32,11 @@ class Motor {
     public:
         Motor();/*!< constructeur de Motor */
         StepperMotor& getStepper(StepperId stepperId);
+        ServoMotor& getServo(ServoId servoId);
         ~Motor();/*!< destructeur de Motor */
     private:
         CAN can;
         StepperMotor mL,mR;
+        ServoMotor mTest;
 };
 #endif

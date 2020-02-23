@@ -8,7 +8,6 @@
 
 #include "mbed.h"
 #include "Odometer.h"
-#include <std_msgs/StringLib.h>
 
 typedef enum{
     ODOMETER_X,ODOMETER_Y,ODOMETER_ALPHA   

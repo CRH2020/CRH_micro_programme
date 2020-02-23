@@ -9,9 +9,7 @@
 
 
 #include "mbed.h"
-#include "ros.h"
 #include "RobotConfig.h"
-#include <std_msgs/StringLib.h>
 
 /*!
  * \class Odometer
@@ -23,7 +21,7 @@
 */
 class Odometer {
     public:
-        Odometer(PinName Aright,PinName Bright,PinName Aleft,PinName Bleft,double perimeter,double distCenter2Wheel,uint16_t NbPulse);/*!< constructeur de Odometer*/
+        Odometer(PinName Aright,PinName Bright,PinName Aleft,PinName Bleft,double perimeterRight,double perimeterLeft,double distCenter2Wheel,uint16_t NbPulse);/*!< constructeur de Odometer*/
         double getX();
         double getY();
         double getAlpha();
@@ -34,9 +32,10 @@ class Odometer {
         void computePos(double dl);
         InterruptIn _Aright,_Aleft;
         DigitalIn _Bright,_Bleft;
-        double _perimeter,_distCenter2Wheel;
+        DigitalOut test;
         uint16_t _NbPulse;
-        double x,y,z,alpha,dalpha,dl;
+        double x,y,z,alpha,dalphaR,dlR,dalphaL,dlL;
+        uint8_t stateR,stateL,oldStateR,oldStateL;
         
 
 
