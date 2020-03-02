@@ -3,7 +3,7 @@
  * 
  * \brief fichier des definition des fonctions de Odometer
  */
-#include "Odometer.h"
+#include "Odometer.hpp"
 
 /*!
  * \fn Odometer::Odometer (void)

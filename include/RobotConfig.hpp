@@ -1,5 +1,5 @@
 /*!
- * \file RobotConfig.h
+ * \file RobotConfig.hpp
  * 
  * \brief fichier de configuration principale
  * 
@@ -26,6 +26,9 @@
 #define PERIMETREWHEEL_LEFT  125.66
 #define PERIMETREWHEEL_RIGHT  116.32
 #define NBPULSE         1024
+
+//Trinamic
+#define TRINAMIC_ADDRESS_BOARD_1 1
 
 //Stepper
 #define STEPPER_BAUDRATE 9600

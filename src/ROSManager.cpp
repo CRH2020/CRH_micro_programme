@@ -3,7 +3,7 @@
  * 
  * \brief fichier des definition des fonctions de ROSManager
  */
-#include "ROSManager.h"
+#include "ROSManager.hpp"
 
 /*!
  * \fn ROSManager::ROSManager (void)
@@ -12,23 +12,46 @@
  * 
  * 
  */
-ROSManager::ROSManager(Motor& motors,SequanceManager& sequancer): _motors(motors),_sequancer(sequancer),velocity(TOPIC_NAME_VELOCITY,&ROSManager::messageVelocity,this),sequance("sequance",&ROSManager::messageSequance,this),pos("pos",&posMsg){
-    node.initNode();
-    node.subscribe(velocity);
-    node.subscribe(sequance);
-    node.advertise(pos);
+ROSManager::ROSManager(Motor& motors,SequenceManager& sequencer,MovingManager& mover) :
+    _motors(motors),
+    _sequencer(sequencer),
+    _mover(mover),
+    velocity(TOPIC_NAME_VELOCITY,&ROSManager::messageVelocity,this),
+    sequence("sequence",&ROSManager::messageSequence,this),
+    deplacement("deplacement",&ROSManager::messageDeplacement,this),
+    pos("pos",&posMsg)
+{
 
-    thread.start(callback(this,&ROSManager::startThread));
+    // node pour message non bloquant
+    nodeMain.initNode();
+    nodeMain.subscribe(velocity);
+    nodeMain.subscribe(sequence);
+    nodeMain.advertise(pos);
+
+    rosMainThread.start(callback(this,&ROSManager::startRosMainThread));
     PRINTDEBUG  = callback(this,&ROSManager::rosDebug);
+
+    //node pour messages deplacement
+    nodeDeplacement.initNode();
+    nodeDeplacement.advertiseService(deplacement);
+
+    rosDeplacementThread.start(callback(this,&ROSManager::startRosDeplacementThread));
 
 }
 
-void ROSManager::startThread(void){
+void ROSManager::startRosMainThread(void){
     while(1){
-        node.spinOnce();
+        nodeMain.spinOnce();
         ThisThread::sleep_for(1);
     }
 
+}
+
+void ROSManager::startRosDeplacementThread(void){
+    while(1){
+        nodeDeplacement.spinOnce();
+        ThisThread::sleep_for(1);
+    }
 }
 
 void ROSManager::messageVelocity(const geometry_msgs::Twist& msg){
@@ -55,14 +78,18 @@ void ROSManager::publishPosition(double x,double y,double alpha){
     pos.publish(&posMsg);
 }
 
-void ROSManager::messageSequance(const geometry_msgs::Pose2D& msg){
+void ROSManager::messageSequence(const geometry_msgs::Pose2D& msg){
     double angle;
     angle = msg.x;
-    _sequancer.runSequance(TESTSERVO,1,&angle);
+    _sequencer.runSequence(TESTSERVO,1,&angle);
+}
+
+void ROSManager::messageDeplacement(const shared::ProcessDeplacement::Request& req, shared::ProcessDeplacement::Response& res){
+    res.result_code = _mover.moveRobot(req.distance,req.angle);
 }
 
 int ROSManager::rosDebug(const char * fmt){
-    node.loginfo(fmt);
+    nodeMain.loginfo(fmt);
     return 0;
 }
 

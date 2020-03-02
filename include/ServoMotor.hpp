@@ -1,5 +1,5 @@
 /*!
- * \file ServoMotor.h
+ * \file ServoMotor.hpp
  * 
  * \brief fichier header de ServoMotor
  */
@@ -7,7 +7,7 @@
 #define DEF_SERVOMOTOR
 
 #include "mbed.h"
-#include "PrintDebug.h"
+#include "PrintDebug.hpp"
 
 /*!
  * \class ServoMotor

@@ -1,5 +1,5 @@
 /*!
- * \file Motor.h
+ * \file Motor.hpp
  * 
  * \brief fichier header de Motor
  */
@@ -7,18 +7,19 @@
 #define DEF_MOTOR
 
 #include "mbed.h"
-#include "StepperMotor.h"
-#include "ServoMotor.h"
-#include "RobotConfig.h"
-#include "PrintDebug.h"
+#include "StepperMotor.hpp"
+#include "ServoMotor.hpp"
+#include "RobotConfig.hpp"
+#include "PrintDebug.hpp"
+#include "TrinamicTmclDriver.hpp"
 
-typedef enum{
+enum StepperId{
     MOTOR_LEFT,MOTOR_RIGHT
-} StepperId;
+};
 
-typedef enum{
+enum  ServoId{
     TEST
-} ServoId;
+};
 
 /*!
  * \class Motor
@@ -35,8 +36,11 @@ class Motor {
         ServoMotor& getServo(ServoId servoId);
         ~Motor();/*!< destructeur de Motor */
     private:
+        void canRx();
         CAN can;
+        TrinamicTmclDriver driver1;
         StepperMotor mL,mR;
         ServoMotor mTest;
+
 };
 #endif

@@ -1,5 +1,5 @@
 /*!
- * \file Odometer.h
+ * \file Odometer.hpp
  * 
  * \brief fichier header de Odometer
  */
@@ -9,7 +9,7 @@
 
 
 #include "mbed.h"
-#include "RobotConfig.h"
+#include "RobotConfig.hpp"
 
 /*!
  * \class Odometer

@@ -3,7 +3,7 @@
  * 
  * \brief fichier des definition des fonctions de Sensor
  */
-#include "Sensor.h"
+#include "Sensor.hpp"
 
 /*!
  * \fn Sensor::Sensor (void)

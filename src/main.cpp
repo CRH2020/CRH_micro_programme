@@ -7,10 +7,11 @@
 #include <mbed.h>
 #include <ros.h>
 #include <std_msgs/StringLib.h>
-#include "PrintDebug.h"
-#include "ROSManager.h"
-#include "SequanceManager.h"
-#include "StepperMotor.h"
+#include "PrintDebug.hpp"
+#include "ROSManager.hpp"
+#include "SequenceManager.hpp"
+#include "StepperMotor.hpp"
+#include "MovingManager.hpp"
 
 
 /*!
@@ -27,8 +28,9 @@ int main() {
   DigitalOut myled(LED1);
   Motor motors;
   Sensor sensors;
-  SequanceManager sequanceur(motors,sensors);
-  ROSManager rosmanager(motors,sequanceur);
+  MovingManager mover(motors,sensors);
+  SequenceManager sequenceur(motors,sensors);
+  ROSManager rosmanager(motors,sequenceur,mover);
   rosmanager.rosDebug("Salut");
 
   while(1) {

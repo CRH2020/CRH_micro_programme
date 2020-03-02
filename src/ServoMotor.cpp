@@ -3,7 +3,7 @@
  * 
  * \brief fichier des definition des fonctions de ServoMotor
  */
-#include "ServoMotor.h"
+#include "ServoMotor.hpp"
 
 /*!
  * \fn ServoMotor::ServoMotor (void)

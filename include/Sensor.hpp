@@ -1,5 +1,5 @@
 /*!
- * \file Sensor.h
+ * \file Sensor.hpp
  * 
  * \brief fichier header de Sensor
  */
@@ -7,7 +7,7 @@
 #define DEF_SENSOR
 
 #include "mbed.h"
-#include "Odometer.h"
+#include "Odometer.hpp"
 
 typedef enum{
     ODOMETER_X,ODOMETER_Y,ODOMETER_ALPHA   
