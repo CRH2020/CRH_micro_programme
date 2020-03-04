@@ -27,15 +27,10 @@ ROSManager::ROSManager(Motor& motors,SequenceManager& sequencer,MovingManager& m
     nodeMain.subscribe(velocity);
     nodeMain.subscribe(sequence);
     nodeMain.advertise(pos);
+    nodeMain.subscribe(deplacement);
 
     rosMainThread.start(callback(this,&ROSManager::startRosMainThread));
     PRINTDEBUG  = callback(this,&ROSManager::rosDebug);
-
-    //node pour messages deplacement
-    nodeDeplacement.initNode();
-    nodeDeplacement.advertiseService(deplacement);
-
-    rosDeplacementThread.start(callback(this,&ROSManager::startRosDeplacementThread));
 
 }
 
@@ -45,13 +40,6 @@ void ROSManager::startRosMainThread(void){
         ThisThread::sleep_for(1);
     }
 
-}
-
-void ROSManager::startRosDeplacementThread(void){
-    while(1){
-        nodeDeplacement.spinOnce();
-        ThisThread::sleep_for(1);
-    }
 }
 
 void ROSManager::messageVelocity(const geometry_msgs::Twist& msg){
@@ -84,8 +72,9 @@ void ROSManager::messageSequence(const geometry_msgs::Pose2D& msg){
     _sequencer.runSequence(TESTSERVO,1,&angle);
 }
 
-void ROSManager::messageDeplacement(const shared::ProcessDeplacement::Request& req, shared::ProcessDeplacement::Response& res){
-    res.result_code = _mover.moveRobot(req.distance,req.angle);
+void ROSManager::messageDeplacement(const geometry_msgs::Pose2D& msg){
+
+    _mover.moveRobot(msg.x,msg.theta);
 }
 
 int ROSManager::rosDebug(const char * fmt){

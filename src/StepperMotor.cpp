@@ -43,7 +43,10 @@ void StepperMotor::move(double vitesse){
 void StepperMotor::moveto(double distance){
     double nb_pas;
     nb_pas = distance * _pasParUnite;
-    _driver.sendTMCL(ROL,0,_motorNum,(uint32_t)nb_pas);
+    if(_inverse){
+        nb_pas = -nb_pas;
+    }
+    _driver.sendTMCL(MVP,1,_motorNum,(int32_t)nb_pas);
 }
 
 /*!

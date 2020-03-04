@@ -22,22 +22,28 @@
  * la fonction pricinpale tout sera initialisé ici.
  * 
  */
-int main() {
+void run_app() {
   sleep_manager_lock_deep_sleep_internal();
-
-  DigitalOut myled(LED1);
   Motor motors;
   Sensor sensors;
   MovingManager mover(motors,sensors);
   SequenceManager sequenceur(motors,sensors);
   ROSManager rosmanager(motors,sequenceur,mover);
-  rosmanager.rosDebug("Salut");
+  //rosmanager.rosDebug("Salut");
+  while(1) {
+        ThisThread::sleep_for(500);
+        //rosmanager.publishPosition(sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
+        //sprintf(textBuff,"x: %lf,y: %lf,alpha: %lf\n\r",sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
+        //rosmanager.rosDebug(textBuff);
+  }
+}
 
+int main(){
+  DigitalOut myled(LED1);
+  Thread app_thread(osPriorityNormal, 8 * 1024); // 16K stack
+  app_thread.start(&run_app);
   while(1) {
         myled=!myled; // set LED1 pin to high
         ThisThread::sleep_for(500);
-        rosmanager.publishPosition(sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
-        //sprintf(textBuff,"x: %lf,y: %lf,alpha: %lf\n\r",sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
-        //rosmanager.rosDebug(textBuff);
   }
 }

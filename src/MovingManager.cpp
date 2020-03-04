@@ -33,13 +33,15 @@ void MovingManager::movingThread(){
     double xdif,xL,xR;
     while(1){
         runMoveFlag.wait_any(1);
-        
+        PRINTDEBUG("On bouge");
         xdif = _angle*ENTRAX_ROUE_CENTRE;
         xL = _distance - xdif;
         xR = _distance + xdif;
 
         _motors.getStepper(MOTOR_LEFT).moveto(xL);
-        _motors.getStepper(MOTOR_LEFT).moveto(xR);
+        _motors.getStepper(MOTOR_RIGHT).moveto(xR);
+
+        isMoving = false;
 
     }
 }

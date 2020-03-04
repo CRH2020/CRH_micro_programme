@@ -40,18 +40,18 @@ class ROSManager {
         void startRosDeplacementThread(void);
         void messageVelocity(const geometry_msgs::Twist& msg);
         void messageSequence(const geometry_msgs::Pose2D& msg);
-        void messageDeplacement(const shared::ProcessDeplacement::Request &req, shared::ProcessDeplacement::Response &res);
+        void messageDeplacement(const geometry_msgs::Pose2D& msg);
 
         Motor& _motors;
         SequenceManager& _sequencer;
         MovingManager& _mover;
-        ros::NodeHandle  nodeMain,nodeDeplacement;
+        ros::NodeHandle  nodeMain;
         ros::Subscriber<geometry_msgs::Twist, ROSManager> velocity;
         ros::Subscriber<geometry_msgs::Pose2D, ROSManager> sequence;
-        ros::ServiceServer<shared::ProcessDeplacement::Request,shared::ProcessDeplacement::Response, ROSManager> deplacement;
+        ros::Subscriber<geometry_msgs::Pose2D, ROSManager> deplacement;
         ros::Publisher pos;
         geometry_msgs::Pose2D posMsg;
-        Thread rosMainThread,rosDeplacementThread;
+        Thread rosMainThread;
 };
 
 #endif
