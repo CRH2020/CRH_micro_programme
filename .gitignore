@@ -2,5 +2,6 @@
 BuildCache
 .vscode
 test
+extra_script.py
 __pycache__
 
