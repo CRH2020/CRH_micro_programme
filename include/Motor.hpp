@@ -34,13 +34,14 @@ class Motor {
         Motor();/*!< constructeur de Motor */
         StepperMotor& getStepper(StepperId stepperId);
         ServoMotor& getServo(ServoId servoId);
+        void startThread();
         ~Motor();/*!< destructeur de Motor */
     private:
-        void canRx();
         CAN can;
         TrinamicTmclDriver driver1;
         StepperMotor mL,mR;
         ServoMotor mTest;
+        Thread thread;
 
 };
 #endif

@@ -60,6 +60,7 @@ void TrinamicTmclDriver::msgRx(uint8_t* data,uint8_t len){
 
     switch(status){
         case 100:
+            PRINTDEBUG("TrinamicTmclDriver: msgRx : sCommande ok");
             break;
         case 101:
             break;

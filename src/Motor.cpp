@@ -13,8 +13,7 @@
  * 
  */
 Motor::Motor():can(PIN_MOTOR_CAN_RD,PIN_MOTOR_CAN_TD),driver1(can,TRINAMIC_ADDRESS_BOARD_1),mL(driver1,200,false,0),mR(driver1,200,true,1),mTest(PIN_TESTSERVO,60){
-  can.monitor(false);
-  can.attach(callback(this,&Motor::canRx));
+  thread.start(callback(this,&Motor::startThread));
 
 }
 
@@ -34,16 +33,22 @@ ServoMotor& Motor::getServo(ServoId ServoId){
     }
 }
 
-void Motor::canRx(){
+void Motor::startThread(){
     CANMessage msg;
-    if(can.read(msg)){
-        switch(msg.data[0]){
-            case TRINAMIC_ADDRESS_BOARD_1:
-                driver1.msgRx(msg.data,msg.len);
-                break;
-            default:
-                break;
+    while(1){
+        if(can.read(msg)){
+            PRINTDEBUG("can message");
+
+            switch(msg.data[0]){
+                case TRINAMIC_ADDRESS_BOARD_1:
+                    PRINTDEBUG("can message pour la trinamic");
+                    driver1.msgRx(msg.data,msg.len);
+                    break;
+                default:
+                    break;
+            }
         }
+        ThisThread::sleep_for(1);
     }
 }
 
