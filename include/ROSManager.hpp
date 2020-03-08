@@ -17,7 +17,11 @@
 #include "geometry_msgs/Quaternion.h"
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/Pose2D.h"
-#include "shared/ProcessDeplacement.h"
+#include "std_msgs/UInt8.h"
+#include "shared/Deplacement.h"
+#include "shared/Parametre.h"
+#include "shared/SensorData.h"
+#include "shared/SequenceAck.h"
 
 #include "PrintDebug.hpp"
 
@@ -39,17 +43,27 @@ class ROSManager {
         void startRosMainThread(void);
         void startRosDeplacementThread(void);
         void messageVelocity(const geometry_msgs::Twist& msg);
-        void messageSequence(const geometry_msgs::Pose2D& msg);
-        void messageDeplacement(const geometry_msgs::Pose2D& msg);
+        void messageSequence(const std_msgs::UInt8& msg);
+        void messageDeplacement(const shared::Deplacement& msg);
+        void messageParametre(const shared::Parametre& msg);
 
         Motor& _motors;
         SequenceManager& _sequencer;
         MovingManager& _mover;
         ros::NodeHandle  nodeMain;
         ros::Subscriber<geometry_msgs::Twist, ROSManager> velocity;
-        ros::Subscriber<geometry_msgs::Pose2D, ROSManager> sequence;
-        ros::Subscriber<geometry_msgs::Pose2D, ROSManager> deplacement;
-        ros::Publisher pos;
+
+        ros::Subscriber<shared::Deplacement, ROSManager> deplacementIn;
+        ros::Subscriber<std_msgs::UInt8, ROSManager> sequenceIn;
+        ros::Subscriber<shared::Parametre, ROSManager> parametreIn;
+        ros::Subscriber<std_msgs::UInt8, ROSManager>   sensorIn;
+
+        ros::Publisher positionOut;
+        ros::Publisher deplacementOut;
+        ros::Publisher sequenceOut;
+        ros::Publisher parametreOut;
+        ros::Publisher sensorOut;
+
         geometry_msgs::Pose2D posMsg;
         Thread rosMainThread;
 };

@@ -1,5 +1,6 @@
-#ifndef _ROS_SERVICE_ProcessDeplacement_h
-#define _ROS_SERVICE_ProcessDeplacement_h
+#ifndef _ROS_shared_Deplacement_h
+#define _ROS_shared_Deplacement_h
+
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
@@ -8,9 +9,7 @@
 namespace shared
 {
 
-static const char PROCESSDEPLACEMENT[] = "shared/ProcessDeplacement";
-
-  class ProcessDeplacementRequest : public ros::Msg
+  class Deplacement : public ros::Msg
   {
     public:
       typedef double _distance_type;
@@ -18,7 +17,7 @@ static const char PROCESSDEPLACEMENT[] = "shared/ProcessDeplacement";
       typedef double _angle_type;
       _angle_type angle;
 
-    ProcessDeplacementRequest():
+    Deplacement():
       distance(0),
       angle(0)
     {
@@ -94,58 +93,9 @@ static const char PROCESSDEPLACEMENT[] = "shared/ProcessDeplacement";
      return offset;
     }
 
-    const char * getType(){ return PROCESSDEPLACEMENT; };
+    const char * getType(){ return "shared/Deplacement"; };
     const char * getMD5(){ return "1f1d53743f4592ee455aa3eaf9019457"; };
 
-  };
-
-  class ProcessDeplacementResponse : public ros::Msg
-  {
-    public:
-      typedef int8_t _result_code_type;
-      _result_code_type result_code;
-
-    ProcessDeplacementResponse():
-      result_code(0)
-    {
-    }
-
-    virtual int serialize(unsigned char *outbuffer) const
-    {
-      int offset = 0;
-      union {
-        int8_t real;
-        uint8_t base;
-      } u_result_code;
-      u_result_code.real = this->result_code;
-      *(outbuffer + offset + 0) = (u_result_code.base >> (8 * 0)) & 0xFF;
-      offset += sizeof(this->result_code);
-      return offset;
-    }
-
-    virtual int deserialize(unsigned char *inbuffer)
-    {
-      int offset = 0;
-      union {
-        int8_t real;
-        uint8_t base;
-      } u_result_code;
-      u_result_code.base = 0;
-      u_result_code.base |= ((uint8_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      this->result_code = u_result_code.real;
-      offset += sizeof(this->result_code);
-     return offset;
-    }
-
-    const char * getType(){ return PROCESSDEPLACEMENT; };
-    const char * getMD5(){ return "873ed3f54847f7a2d6c6991693b8ccbc"; };
-
-  };
-
-  class ProcessDeplacement {
-    public:
-    typedef ProcessDeplacementRequest Request;
-    typedef ProcessDeplacementResponse Response;
   };
 
 }
