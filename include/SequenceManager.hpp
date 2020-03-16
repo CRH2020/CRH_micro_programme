@@ -26,7 +26,7 @@ typedef enum{
 class SequenceManager {
     public:
         SequenceManager(Motor& motors,Sensor& sensors);/*!< constructeur de SequenceManager */
-        int runSequence(SequenceId id,uint8_t nbArg,double* valArg );
+        int runSequence(SequenceId id,uint8_t nbArg = 0,double* valArg = nullptr);
         ~SequenceManager();/*!< destructeur de SequenceManager */
     private:
         void moveTo();

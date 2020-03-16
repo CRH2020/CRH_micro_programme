@@ -25,7 +25,9 @@ class StepperMotor {
         ~StepperMotor();/*!< destructeur de StepperMotor */
 
         void move(double vitesse);
-        void moveto(double distance);
+        int moveto(double distance);
+        void waitForFinish();
+        void clearFinish();
     private:
         double _pasParUnite;
         TrinamicTmclDriver& _driver;

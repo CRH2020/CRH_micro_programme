@@ -22,6 +22,7 @@
 class MovingManager {
     public:
         MovingManager(Motor& motors,Sensor& sensors);/*!< constructeur de MovingManager */
+        void attachEndMoving(Callback<void (int8_t result)> finDeplacementCallback);
         int moveRobot(double distance,double angle);
         ~MovingManager();/*!< destructeur de MovingManager */
     private:
@@ -32,6 +33,7 @@ class MovingManager {
         EventFlags runMoveFlag;
         double _angle,_distance;
         bool isMoving;
+        Callback<void (int8_t result)> _finDeplacementCallback;
 };
 
 #endif

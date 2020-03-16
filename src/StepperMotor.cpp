@@ -13,7 +13,15 @@
  * 
  */
 StepperMotor::StepperMotor(TrinamicTmclDriver& driver, double pasParUnite,bool inverse,uint8_t motorNum):_pasParUnite(pasParUnite),_driver(driver),_inverse(inverse),_motorNum(motorNum){
-    _driver.sendTMCL(SAP,154,motorNum,0);
+    driver.configureMotor(motorNum);
+}
+
+void StepperMotor::waitForFinish(){
+    _driver.getRTPflag().wait_any(0x01<<_motorNum);
+}
+
+void StepperMotor::clearFinish(){
+    _driver.getRTPflag().clear(0x01<<_motorNum);
 }
 
 void StepperMotor::move(double vitesse){
@@ -40,13 +48,15 @@ void StepperMotor::move(double vitesse){
 
 }
 
-void StepperMotor::moveto(double distance){
+int StepperMotor::moveto(double distance){
     double nb_pas;
+    uint8_t motorMask = 0x01<<_motorNum;
     nb_pas = distance * _pasParUnite;
     if(_inverse){
         nb_pas = -nb_pas;
     }
-    _driver.sendTMCL(MVP,1,_motorNum,(int32_t)nb_pas);
+    //_driver.sendTMCL(RTP,1,0,motorMask);
+    return _driver.sendTMCL(MVP,1,_motorNum,(int32_t)nb_pas);
 }
 
 /*!

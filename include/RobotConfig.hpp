@@ -41,3 +41,12 @@
 // ROS
 
 #define TOPIC_NAME_VELOCITY "velocity"
+
+#define TOPIC_NAME_DEPLACEMENT_IN "deplacement_call"
+#define TOPIC_NAME_DEPLACEMENT_OUT "deplacement_rep"
+#define TOPIC_NAME_SEQUENCE_IN "sequence_call"
+#define TOPIC_NAME_SEQUENCE_OUT "sequence_rep"
+#define TOPIC_NAME_SENSOR_IN "sensor_get"
+#define TOPIC_NAME_SENSOR_OUT "sensor_rep"
+#define TOPIC_NAME_POSITION "pos"
+#define TOPIC_NAME_PARAMETRE "param_set"

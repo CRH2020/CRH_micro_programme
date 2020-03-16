@@ -28,10 +28,11 @@ void run_app() {
   Sensor sensors;
   MovingManager mover(motors,sensors);
   SequenceManager sequenceur(motors,sensors);
-  ROSManager rosmanager(motors,sequenceur,mover);
+  //ROSManager rosmanager(motors,sequenceur,mover);
   //rosmanager.rosDebug("Salut");
   while(1) {
-        ThisThread::sleep_for(500);
+        ThisThread::sleep_for(5000);
+        mover.moveRobot(1000,0);
         //rosmanager.publishPosition(sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
         //sprintf(textBuff,"x: %lf,y: %lf,alpha: %lf\n\r",sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
         //rosmanager.rosDebug(textBuff);
@@ -40,7 +41,7 @@ void run_app() {
 
 int main(){
   DigitalOut myled(LED1);
-  Thread app_thread(osPriorityNormal, 8 * 1024); // 16K stack
+  Thread app_thread(osPriorityNormal, 8 * 1024); // 8K stack
   app_thread.start(&run_app);
   while(1) {
         myled=!myled; // set LED1 pin to high

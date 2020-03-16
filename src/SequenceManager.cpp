@@ -35,8 +35,8 @@ int SequenceManager::runSequence(SequenceId id,uint8_t nbArg,double* valArg ){
         for(uint8_t i=0;i<nbArg;i++){
             valeurArg[i] = valArg[i];
         }
-        nombreArg = nbArg;
     }
+    nombreArg = nbArg;
     runingFlag.set(1);
     return 0;
 }

@@ -17,20 +17,36 @@ ROSManager::ROSManager(Motor& motors,SequenceManager& sequencer,MovingManager& m
     _sequencer(sequencer),
     _mover(mover),
     velocity(TOPIC_NAME_VELOCITY,&ROSManager::messageVelocity,this),
-    sequence("sequence",&ROSManager::messageSequence,this),
-    deplacement("deplacement",&ROSManager::messageDeplacement,this),
-    pos("pos",&posMsg)
+
+    deplacementIn(TOPIC_NAME_DEPLACEMENT_IN,&ROSManager::messageDeplacement,this),
+    sequenceIn(TOPIC_NAME_SEQUENCE_IN,&ROSManager::messageSequence,this),
+    parametreIn(TOPIC_NAME_PARAMETRE,&ROSManager::messageParametre,this),
+    sensorIn(TOPIC_NAME_SENSOR_IN,&ROSManager::messageSensor,this),
+
+    positionOut(TOPIC_NAME_POSITION,&posMsg),
+    deplacementOut(TOPIC_NAME_DEPLACEMENT_OUT,&deplacementMsg),
+    sequenceOut(TOPIC_NAME_SEQUENCE_OUT,&sequenceMsg),
+    sensorOut(TOPIC_NAME_SENSOR_OUT,&sensorMsg)
 {
 
     // node pour message non bloquant
     nodeMain.initNode();
     nodeMain.subscribe(velocity);
-    nodeMain.subscribe(sequence);
-    nodeMain.advertise(pos);
-    nodeMain.subscribe(deplacement);
+
+    nodeMain.subscribe(deplacementIn);
+    nodeMain.subscribe(sequenceIn);
+    nodeMain.subscribe(parametreIn);
+    nodeMain.subscribe(sensorIn);
+
+    nodeMain.advertise(positionOut);
+    nodeMain.advertise(deplacementOut);
+    nodeMain.advertise(sequenceOut);
+    nodeMain.advertise(sensorOut);
 
     rosMainThread.start(callback(this,&ROSManager::startRosMainThread));
     PRINTDEBUG  = callback(this,&ROSManager::rosDebug);
+
+    _mover.attachEndMoving(callback(this,&ROSManager::publishDeplacement));
 
 }
 
@@ -58,24 +74,45 @@ void ROSManager::messageVelocity(const geometry_msgs::Twist& msg){
     _motors.getStepper(MOTOR_RIGHT).move(vR);
 }
 
+void ROSManager::messageSequence(const std_msgs::UInt8& msg){
+    _sequencer.runSequence((SequenceId)msg.data);
+}
+
+void ROSManager::messageDeplacement(const shared::Deplacement& msg){
+    _mover.moveRobot(msg.distance,msg.angle);
+}
+
+void ROSManager::messageParametre(const shared::Parametre& msg){
+
+}
+void ROSManager::messageSensor(const std_msgs::UInt8& msg){
+
+}
+
 void ROSManager::publishPosition(double x,double y,double alpha){
     posMsg.x = x;
     posMsg.y = y;
     posMsg.theta = alpha;
 
-    pos.publish(&posMsg);
+    positionOut.publish(&posMsg);
 }
 
-void ROSManager::messageSequence(const geometry_msgs::Pose2D& msg){
-    double angle;
-    angle = msg.x;
-    _sequencer.runSequence(TESTSERVO,1,&angle);
+void ROSManager::publishDeplacement(int8_t result){
+    deplacementMsg.data = result;
+    deplacementOut.publish(&deplacementMsg);
+}
+void ROSManager::publishSequence(uint8_t id,uint8_t result){
+    sequenceMsg.sequence_id = id;
+    sequenceMsg.result_code = result;
+    sequenceOut.publish(&sequenceMsg);
+
+}
+void ROSManager::publishSensor(uint8_t id, double data){
+    sensorMsg.sensor_data = data;
+    sensorMsg.sensor_id = id;
+    sensorOut.publish(&sensorMsg);
 }
 
-void ROSManager::messageDeplacement(const geometry_msgs::Pose2D& msg){
-
-    _mover.moveRobot(msg.x,msg.theta);
-}
 
 int ROSManager::rosDebug(const char * fmt){
     nodeMain.loginfo(fmt);
