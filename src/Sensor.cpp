@@ -5,6 +5,8 @@
  */
 #include "Sensor.hpp"
 
+
+
 /*!
  * \fn Sensor::Sensor (void)
  * 
@@ -17,38 +19,39 @@ Sensor::Sensor():odometer(PIN_ODOMETER_ARIGHT,PIN_ODOMETER_BRIGHT,PIN_ODOMETER_A
     printf("INIT Sensor ! \n\r");
 
     /* Init le vecteur qui contiendra les valeurs des capteurs de distance mis à jour régulièrement */
-    valCaptDist.resize(6,0);
+    /* 65535 indique que les capteurs ne sont pas initialisés */
+    valCaptDist.resize(6, 65535);
 
-    int checkInit = 0;
-
-    /* Initilise les 6 capteurs de distances */
+    /* Initilise tous les capteurs de distances */
     for (size_t i = 0 ; i < valCaptDist.size(); i++) {
 
         /* Selectionne le canal */
-        i2cMux.ch(CH2 << i);
+        i2cMux.ch(CH2 << i);    
+        printf("Capteur dist N %d -> init ", i);
         
         /* Test si le capteur est branché */
         if ( !capteurDistance.init() ) {
-            printf("FAILED TO INIT sensor dist (n = %d)\n\r", i); //Initialize device and check for errors
-
+            printf("FAILED (wrong sensor)\n\r"); //Initialize device and check for errors
             continue ;
         } else {
-            
+            /* Met le mode de lecture continue (periode de 10ms) */
+            capteurDistance.startContinuous(10);
             /* Test si le capteur est correctement init */
-            checkInit = capteurDistance.readRangeSingleMillimeters();
-            if (checkInit != 0){
-                printf("INIT OK sensor (n = %d) : ", i ); 
-                printf("Dist. sensor (n = %d) (mm) = %d - ", i, checkInit );
+            uint16_t checkInit = capteurDistance.readRangeContinuousMillimeters();
+            if (checkInit != 0 && checkInit != 65535){
+                printf("success - "); 
+                /* Met à jour le vecteur de donnée */
+                valCaptDist[i] = checkInit;
+                printf("Val = %d (mm)\n\r", valCaptDist[i] );
             } else {
-                printf("FAILED TO INIT sensor dist (n = %d) - ", i); //Initialize device and check for errors
+                printf("FAILED (nothing plugged)\r\n"); //Initialize device and check for errors
+                continue ;
             }
         }
-        /* Met à jour le vecteur de donnée */
-        valCaptDist[i] = checkInit;
-        printf("Val = %d \n\r", valCaptDist[i] );
+       
     }
-    
 
+    // Pas possible de lancer le thread de lecture constantes des capteurs ici car le fonctionne se termine juste après
 }
 
 double Sensor::getSensorData(SensorDataId sensorDataId){
@@ -59,6 +62,8 @@ double Sensor::getSensorData(SensorDataId sensorDataId){
             return odometer.getY();
         case ODOMETER_ALPHA:
             return odometer.getAlpha();
+        case DISTANCE_1:
+            return valCaptDist[0];
         default:
             return 0;
     }
@@ -73,3 +78,4 @@ double Sensor::getSensorData(SensorDataId sensorDataId){
 Sensor::~Sensor(){
     
 }  
+

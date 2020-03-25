@@ -13,6 +13,7 @@
 #include "StepperMotor.hpp"
 #include "MovingManager.hpp"
 
+void updateSensorDistance(Sensor* sensor);
 
 /*!
  * \fn int main (void)
@@ -31,11 +32,15 @@ void run_app() {
   //ROSManager rosmanager(motors,sequenceur,mover);
   //rosmanager.rosDebug("Salut");
   while(1) {
-        ThisThread::sleep_for(5000);
-        mover.moveRobot(1000,0);
-        //rosmanager.publishPosition(sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
-        //sprintf(textBuff,"x: %lf,y: %lf,alpha: %lf\n\r",sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
-        //rosmanager.rosDebug(textBuff);
+    //ThisThread::sleep_for(5000);
+    //mover.moveRobot(1000,0);
+    //rosmanager.publishPosition(sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
+    //sprintf(textBuff,"x: %lf,y: %lf,alpha: %lf\n\r",sensors.getSensorData(ODOMETER_X),sensors.getSensorData(ODOMETER_Y),sensors.getSensorData(ODOMETER_ALPHA));
+    //rosmanager.rosDebug(textBuff);
+
+    /* Mise à jour des capteurs de distance (à définir la période) */
+    ThisThread::sleep_for(100);
+    updateSensorDistance(&sensors);
   }
 }
 
@@ -47,4 +52,30 @@ int main(){
         myled=!myled; // set LED1 pin to high
         ThisThread::sleep_for(500);
   }
+}
+
+
+
+void updateSensorDistance(Sensor* sensor) {
+
+    /* Pour chaque capteur */
+    for (size_t i = 0 ; i <  sensor->valCaptDist.size(); i++) {
+
+        /* Check si le capteur est correctement init */
+        if (sensor->valCaptDist[i] == 65535) {
+          continue ;
+        }
+
+        /* Selectionne le canal */
+        sensor->i2cMux.ch(CH2 << i);
+        /* Lis la valeur du capteur */
+        sensor->valCaptDist[i] = sensor->capteurDistance.readRangeContinuousMillimeters();
+
+        printf("N %d = %d (mm) / ", i, sensor->valCaptDist[i] );
+    }
+
+    printf("\n\r");
+
+    return;
+
 }

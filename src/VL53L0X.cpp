@@ -716,11 +716,8 @@ uint16_t VL53L0X::readRangeContinuousMillimeters(void)
   startTimeout();
   while ((readReg(RESULT_INTERRUPT_STATUS) & 0x07) == 0)
   {
-    if (checkTimeoutExpired())
-    {
-      did_timeout = true;
-      return 65535;
-    }
+    if (timeout_start_ms > io_timeout ) { return 65535; }
+    timeout_start_ms++;
   }
 
   // assumptions: Linearity Corrective Gain is 1000 (default);
