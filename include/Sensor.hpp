@@ -32,13 +32,17 @@ class Sensor {
         double getSensorData(SensorDataId SensorDataId);
         ~Sensor();/*!< destructeur de Sensor */
 
+        void runThread();
+
         /* Donnée régulièrement mis à jour si la couleur lue est rouge ou pas */
         int isRed = -1;
 
         /* Vecteur de donnée des distances régulièrement mis à jour */
         std::vector<uint16_t> valCaptDist;
 
-    //private:
+    private:
+
+        Thread updateSensorThread;
 
         Odometer odometer;
         /* Crée le switch avec l'adresse de base 0x70 */

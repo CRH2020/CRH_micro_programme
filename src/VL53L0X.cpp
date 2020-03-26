@@ -43,7 +43,7 @@ VL53L0X::VL53L0X(PinName sda, PinName scl, uint8_t addr ) : m_i2c(sda,scl),m_add
 {
 }
 
-VL53L0X::VL53L0X() : m_i2c(SDA,SCL),m_addr(ADDRESS_DEFAULT), io_timeout(500) // timeout
+VL53L0X::VL53L0X() : m_i2c(SDA,SCL),m_addr(ADDRESS_DEFAULT), io_timeout(500) // timeout (ne doit pas être trop court )
   , did_timeout(true)
 {
 }
@@ -80,7 +80,10 @@ bool VL53L0X::init(bool io_2v8)
   writeReg(0x80, 0x01);
   writeReg(0xFF, 0x01);
   writeReg(0x00, 0x00);
+  /* Permet de vite savoir si le bon capteur est bien branché */
   stop_variable = readReg(0x91);
+  if (!stop_variable)
+    return false;
   writeReg(0x00, 0x01);
   writeReg(0xFF, 0x00);
   writeReg(0x80, 0x00);
@@ -110,7 +113,6 @@ bool VL53L0X::init(bool io_2v8)
   char ref_spad_map[6];
   readMulti(GLOBAL_CONFIG_SPAD_ENABLES_REF_0, ref_spad_map, 6);
 
-
   // -- VL53L0X_set_reference_spads() begin (assume NVM values are valid)
 
   writeReg(0xFF, 0x01);
@@ -136,7 +138,6 @@ bool VL53L0X::init(bool io_2v8)
       spads_enabled++;
     }
   }
-
 
   writeMulti(GLOBAL_CONFIG_SPAD_ENABLES_REF_0, ref_spad_map, 6);
 
@@ -252,6 +253,7 @@ bool VL53L0X::init(bool io_2v8)
 
   measurement_timing_budget_us = getMeasurementTimingBudget();
 
+
   // "Disable MSRC and TCC by default"
   // MSRC = Minimum Signal Rate Check
   // TCC = Target CentreCheck
@@ -263,6 +265,7 @@ bool VL53L0X::init(bool io_2v8)
 
   // "Recalculate timing budget"
   setMeasurementTimingBudget(measurement_timing_budget_us);
+
 
   // VL53L0X_StaticInit() end
 
