@@ -16,7 +16,7 @@
  */
 Sensor::Sensor():odometer(PIN_ODOMETER_ARIGHT,PIN_ODOMETER_BRIGHT,PIN_ODOMETER_ALEFT,PIN_ODOMETER_BLEFT,PERIMETREWHEEL_RIGHT,PERIMETREWHEEL_LEFT,DISTCENTER2WHEEL,NBPULSE){
     
-    printf("INIT Sensor ! \n\r");
+    printf("\n\rINIT Sensor ! \n\r");
 
     /* Init le vecteur qui contiendra les valeurs des capteurs de distance mis à jour régulièrement */
     /* 65535 indique que les capteurs ne sont pas initialisés */
@@ -51,7 +51,52 @@ Sensor::~Sensor(){
     
 }  
 
+/* Thread principal des capteurs */
 void Sensor::runThread() {
+
+    uint32_t timer = 0;
+
+    /* Permet d'init les capteurs de distance */
+    initDistanceSensor();
+
+    /* Boucle mettant à jour les divers capteurs */
+    /* (Définir les périodes de màj dans Sensor.hpp) */
+    while(1){
+       
+        /* Màj les capteurs de distance */
+        if ((timer % COUNT_PERIODE(PERIODE_DISTANCE_SENSOR_MS) ) == 0) {
+            majDistanceSensor();
+        }
+
+        /* Attend la période souhaité */
+        ThisThread::sleep_for(PERIODE_MIN_MS);
+        timer++;
+    }
+}
+
+/* Permet d'init les capteurs de distance */
+void Sensor::majDistanceSensor() {
+     /* Pour chaque capteur */
+    for (size_t i = 0 ; i <  valCaptDist.size(); i++) {
+
+        /* Check si le capteur est correctement init */
+        if (valCaptDist[i] == 65535) {
+            continue ;
+        }
+
+        /* Selectionne le canal */
+        i2cMux.ch(CH2 << i);
+        /* Lis la valeur du capteur */
+        valCaptDist[i] = capteurDistance.readRangeContinuousMillimeters();
+
+        printf("N %d = %d (mm) / ", i, valCaptDist[i] );
+    }
+
+    printf("\n\r");
+}
+
+/* Permet d'init les capteurs de distance */
+void Sensor::initDistanceSensor() {
 
     int nbSensorError = 0;
 
@@ -92,27 +137,5 @@ void Sensor::runThread() {
         printf("\r\n\r\nI2C no plugged !\r\n"); 
     } else if (nbSensorError > 0) {
         printf("\r\n\r\n%d distance sensor failed !\r\n", nbSensorError); 
-    }
-
-    /* Boucle mettant à jour les divers capteurs */
-    while(1){
-        /* Pour chaque capteur */
-        for (size_t i = 0 ; i <  valCaptDist.size(); i++) {
-
-            /* Check si le capteur est correctement init */
-            if (valCaptDist[i] == 65535) {
-            continue ;
-            }
-
-            /* Selectionne le canal */
-            i2cMux.ch(CH2 << i);
-            /* Lis la valeur du capteur */
-            valCaptDist[i] = capteurDistance.readRangeContinuousMillimeters();
-
-            printf("N %d = %d (mm) / ", i, valCaptDist[i] );
-        }
-
-        printf("\n\r");
-        ThisThread::sleep_for(500);
     }
 }
